@@ -9,10 +9,7 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private Particle particleA = new Particle(new Vector2(200, 400),
-                                              new Vector2(1, 0), 50);
-    private Particle particleB = new Particle(new Vector2(800, 400),
-                                              new Vector2(-1, 0), 50);
+    private ParticleManager particleManager;
 
     public Game1()
     {
@@ -28,14 +25,15 @@ public class Game1 : Game
         _graphics.PreferredBackBufferHeight = 1200;
         _graphics.ApplyChanges();
 
+        particleManager = new ParticleManager(Vector2.Zero, 1800, 1200);
+
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        particleA.LoadContent(Content);
-        particleB.LoadContent(Content);
+        particleManager.LoadParticles(Content);
     }
 
     protected override void Update(GameTime gameTime)
@@ -43,9 +41,7 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        particleA.Update(gameTime);
-        particleB.Update(gameTime);
-        Debug.WriteLine(particleA.IsColliding(particleB));
+        particleManager.Update(gameTime);
 
         base.Update(gameTime);
     }
@@ -55,8 +51,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin();
-        particleA.Draw(this._spriteBatch);
-        particleB.Draw(this._spriteBatch);
+        particleManager.Draw(this._spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);

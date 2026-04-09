@@ -10,6 +10,11 @@ public class Particle
     private DiscCollider collider;
     private Vector2 pos;
     private Vector2 vel;
+    public Vector2 Velocity
+    {
+        get { return this.vel; }
+        set { this.vel = value; }
+    }
     
 
     public Particle(Vector2 _pos, Vector2 _vel, float _radius)
@@ -21,13 +26,13 @@ public class Particle
 
     public void Update(GameTime gameTime)
     {
-        pos += vel * gameTime.ElapsedGameTime.Milliseconds;
-        // vel += new Vector2(0, 0.098f);
+        this.pos += this.vel * gameTime.ElapsedGameTime.Milliseconds;
+        this.collider.Position = this.pos;
     }
     
     public void LoadContent(ContentManager content)
     {
-        this.texture = content.Load<Texture2D>("particle"); // 480 x 480
+        this.texture = content.Load<Texture2D>("particle"); // 500 pxls x 500 pxls
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -47,5 +52,10 @@ public class Particle
     public bool IsColliding(Particle other)
     {
         return this.collider.IsColliding(other.GetCollider());
+    }
+
+    public void Accelerate(Vector2 acceleration)
+    {
+        this.vel += acceleration;
     }
 }
