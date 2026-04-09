@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Diagnostics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -8,7 +9,10 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private Particle particle = new Particle(new Vector2(400, 400));
+    private Particle particleA = new Particle(new Vector2(200, 400),
+                                              new Vector2(1, 0), 50);
+    private Particle particleB = new Particle(new Vector2(800, 400),
+                                              new Vector2(-1, 0), 50);
 
     public Game1()
     {
@@ -30,7 +34,8 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        particle.LoadContent(Content);
+        particleA.LoadContent(Content);
+        particleB.LoadContent(Content);
     }
 
     protected override void Update(GameTime gameTime)
@@ -38,7 +43,9 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        particle.Update(gameTime);
+        particleA.Update(gameTime);
+        particleB.Update(gameTime);
+        Debug.WriteLine(particleA.IsColliding(particleB));
 
         base.Update(gameTime);
     }
@@ -48,7 +55,8 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin();
-        particle.Draw(this._spriteBatch);
+        particleA.Draw(this._spriteBatch);
+        particleB.Draw(this._spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
