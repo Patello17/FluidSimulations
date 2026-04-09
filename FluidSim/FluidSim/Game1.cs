@@ -8,6 +8,7 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private Particle particle = new Particle(new Vector2(400, 400));
 
     public Game1()
     {
@@ -19,6 +20,9 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        _graphics.PreferredBackBufferWidth = 1800;
+        _graphics.PreferredBackBufferHeight = 1200;
+        _graphics.ApplyChanges();
 
         base.Initialize();
     }
@@ -26,8 +30,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        // TODO: use this.Content to load your game content here
+        particle.LoadContent(Content);
     }
 
     protected override void Update(GameTime gameTime)
@@ -35,7 +38,7 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        // TODO: Add your update logic here
+        particle.Update(gameTime);
 
         base.Update(gameTime);
     }
@@ -44,7 +47,9 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        // TODO: Add your drawing code here
+        _spriteBatch.Begin();
+        particle.Draw(this._spriteBatch);
+        _spriteBatch.End();
 
         base.Draw(gameTime);
     }
