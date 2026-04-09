@@ -27,14 +27,17 @@ public class BoxCollider
         
     }
     
-    public bool IsColliding(DiscCollider disc)
+    public bool IsCollidingVertical(DiscCollider disc)
+    {
+        bool isCollidingBottom = disc.Position.Y + disc.Radius >= this.rectangle.Bottom;
+        bool isCollidingTop = disc.Position.Y - disc.Radius <= this.rectangle.Top;
+        return isCollidingBottom || isCollidingTop;
+    }
+
+    public bool IsCollidingHorizontal(DiscCollider disc)
     {
         bool isCollidingLeft = disc.Position.X - disc.Radius <= this.rectangle.Left;
         bool isCollidingRight = disc.Position.X + disc.Radius >= this.rectangle.Right;
-        bool isCollidingBottom = disc.Position.Y + disc.Radius >= this.rectangle.Bottom;
-        bool isCollidingTop = disc.Position.Y - disc.Radius <= this.rectangle.Top;
-        // Debug.WriteLine($"{isCollidingLeft}, {isCollidingRight}, {isCollidingBottom}, {isCollidingTop}");
-        // Debug.WriteLine($"{isCollidingLeft || isCollidingRight || isCollidingBottom || isCollidingTop}");
-        return isCollidingLeft || isCollidingRight || isCollidingBottom || isCollidingTop;
-    }
+        return isCollidingLeft || isCollidingRight;
+    } 
 }

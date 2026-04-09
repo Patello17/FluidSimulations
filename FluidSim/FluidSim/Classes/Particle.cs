@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,7 +40,7 @@ public class Particle
     public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(this.texture, this.pos,
-                         null, Color.White,
+                         null, this.CalculateColorBasedOnVelocity(),
                          0f, Vector2.Zero,
                          this.collider.Radius * TEXTURE_SCALE,
                          SpriteEffects.None, 0f);
@@ -57,5 +59,17 @@ public class Particle
     public void Accelerate(Vector2 acceleration)
     {
         this.vel += acceleration;
+    }
+
+    private Color CalculateColorBasedOnVelocity()
+    {
+        float magnitude = (float)Math.Sqrt(this.vel.X * this.vel.X + this.vel.Y * this.vel.Y);
+        if (magnitude == 0)
+        {
+            return Color.White;
+        }
+        // Debug.WriteLine(magnitude);
+        float exaggeration = 0.5f;
+        return new Color(Math.Clamp(magnitude * exaggeration, 0, 255), 0, Math.Clamp(255 - magnitude * exaggeration, 0, 255), 1);  
     }
 }

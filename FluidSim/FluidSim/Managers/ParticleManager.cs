@@ -16,10 +16,10 @@ public class ParticleManager
 
     public ParticleManager(Vector2 managementZonePos, int width, int height)
     {
-        Particle particleA = new Particle(new Vector2(200, 400),
+        Particle particleA = new Particle(new Vector2(200, 200),
                                               new Vector2(0.5f, 0), 20);
         Particle particleB = new Particle(new Vector2(800, 400),
-                                              new Vector2(-3f, 0), 20);
+                                              new Vector2(-2f, 0), 20);
         this.particles = new List<Particle>();
         this.particles.Add(particleA);
         this.particles.Add(particleB);
@@ -40,15 +40,24 @@ public class ParticleManager
 
         foreach (Particle particle in this.particles)
         {
-            if (!boxCollider.IsColliding(particle.GetCollider()))
+            if (!(boxCollider.IsCollidingHorizontal(particle.GetCollider()) || boxCollider.IsCollidingVertical(particle.GetCollider())))
             {
                 particle.Accelerate(new Vector2(0, GRAVITY) * gameTime.ElapsedGameTime.Milliseconds);
                 particle.Update(gameTime);
             }
             else
             {
-                particle.Velocity *= -1;
+                // Fix corner collision logic
+                if (boxCollider.IsCollidingHorizontal(particle.GetCollider()))
+                {
+                    particle.Velocity = new Vector2(-particle.Velocity.X, particle.Velocity.Y);
+                }
+                else if (boxCollider.IsCollidingVertical(particle.GetCollider()))
+                {
+                    particle.Velocity = new Vector2(particle.Velocity.X, -particle.Velocity.Y);
+                }
                 particle.Update(gameTime);
+                
             }
         }
     }
