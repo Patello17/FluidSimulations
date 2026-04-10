@@ -11,6 +11,11 @@ public class Particle
     private Texture2D texture;
     private DiscCollider collider;
     private Vector2 pos;
+    public Vector2 Position
+    {
+        get { return this.pos; }
+        set { this.pos = value; }
+    }
     private Vector2 vel;
     public Vector2 Velocity
     {
@@ -68,8 +73,9 @@ public class Particle
         {
             return Color.White;
         }
-        // Debug.WriteLine(magnitude);
-        float exaggeration = 0.5f;
-        return new Color(Math.Clamp(magnitude * exaggeration, 0, 255), 0, Math.Clamp(255 - magnitude * exaggeration, 0, 255), 1);  
+        float colorScale = 0.5f;
+        // Debug.WriteLine($"R: {magnitude * colorScale}, B: {255 - magnitude * colorScale}");
+        // Faster ~ Redder; Slower ~ Bluer
+        return new Color(Math.Clamp(magnitude * colorScale, 0, 255), 0, Math.Clamp(255 - magnitude * colorScale, 0, 255));
     }
 }

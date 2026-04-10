@@ -19,10 +19,13 @@ public class ParticleManager
         Particle particleA = new Particle(new Vector2(200, 200),
                                               new Vector2(0.5f, 0), 20);
         Particle particleB = new Particle(new Vector2(800, 400),
-                                              new Vector2(-2f, 0), 20);
+                                              new Vector2(-2f, 0f), 20);
+        Particle particleC = new Particle(new Vector2(1000, 400),
+                                              new Vector2(0, 0), 20);
         this.particles = new List<Particle>();
         this.particles.Add(particleA);
         this.particles.Add(particleB);
+        this.particles.Add(particleC);
         this.boxCollider = new BoxCollider(managementZonePos, width, height);
     }
 
@@ -42,7 +45,7 @@ public class ParticleManager
         {
             if (!(boxCollider.IsCollidingHorizontal(particle.GetCollider()) || boxCollider.IsCollidingVertical(particle.GetCollider())))
             {
-                particle.Accelerate(new Vector2(0, GRAVITY) * gameTime.ElapsedGameTime.Milliseconds);
+                particle.Accelerate(new Vector2(0, GRAVITY * gameTime.ElapsedGameTime.Milliseconds));
                 particle.Update(gameTime);
             }
             else
@@ -50,14 +53,16 @@ public class ParticleManager
                 // Fix corner collision logic
                 if (boxCollider.IsCollidingHorizontal(particle.GetCollider()))
                 {
+                    // particle.Position += boxCollider.CalculateCollisionCorrection(particle.GetCollider());
                     particle.Velocity = new Vector2(-particle.Velocity.X, particle.Velocity.Y);
                 }
                 else if (boxCollider.IsCollidingVertical(particle.GetCollider()))
                 {
+                    // particle.Position += boxCollider.CalculateCollisionCorrection(particle.GetCollider());
                     particle.Velocity = new Vector2(particle.Velocity.X, -particle.Velocity.Y);
                 }
+                particle.Position += boxCollider.CalculateCollisionCorrection(gameTime, particle);
                 particle.Update(gameTime);
-                
             }
         }
     }
