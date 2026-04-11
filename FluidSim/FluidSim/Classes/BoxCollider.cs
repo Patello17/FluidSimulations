@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 public class BoxCollider
 {
-    // private const float COLLISION_CORRECTION = 10f;
+    // private const float COLLISION_CORRECTION = 0f;
     private Vector2 pos;
     public Vector2 Position // the top-left corner of the box
     {
@@ -58,33 +59,30 @@ public class BoxCollider
 
     public Vector2 CalculateCollisionCorrection(GameTime gameTime, Particle particle)
     {
-        DiscCollider disc = particle.GetCollider();
-        Vector2 delta_r = particle.Velocity * gameTime.ElapsedGameTime.Milliseconds;
-        float r_mag = (float)Math.Sqrt(delta_r.X * delta_r.X + delta_r.Y * delta_r.Y);
-        // Debug.WriteLine($"DELTA_R: {delta_r}, MAG: {r_mag}");
+        DiscCollider disc = particle.Collider;
         if (IsCollidingBottom(disc))
         {
             // Debug.WriteLine($"BOTTOM");
-            float delta_y = this.rectangle.Bottom - (disc.Position.Y + disc.Radius);
-            return new Vector2(-delta_r.X, delta_y);
+            float delta_y = this.rectangle.Bottom - (Math.Abs(disc.Position.Y) + disc.Radius);
+            return new Vector2(0, delta_y);
         }
         else if (IsCollidingTop(disc))
         {
             // Debug.WriteLine($"TOP");
-            float delta_y = (disc.Position.Y + disc.Radius) - this.rectangle.Top;
-            return new Vector2(delta_r.X, delta_y);
+            float delta_y = disc.Radius - disc.Position.Y - this.rectangle.Top;
+            return new Vector2(0, delta_y);
         }
         else if (IsCollidingLeft(disc))
         {
             // Debug.WriteLine($"LEFT");
-            float delta_x = (disc.Radius - disc.Position.X) - this.rectangle.Left;
-            return new Vector2(delta_x, -delta_r.Y);
+            float delta_x = disc.Radius - disc.Position.X - this.rectangle.Left;
+            return new Vector2(delta_x, 0);
         }
         else if (IsCollidingRight(disc))
         {
             // Debug.WriteLine($"RIGHT");
-            float delta_x = this.rectangle.Right - (disc.Position.X + disc.Radius);
-            return new Vector2(delta_x, -delta_r.Y);
+            float delta_x = this.rectangle.Right - (Math.Abs(disc.Position.X) + disc.Radius);
+            return new Vector2(delta_x, 0);
         }
         return Vector2.Zero;
     }

@@ -54,6 +54,12 @@ public class Game1 : Game
         particleManager.Draw(this._spriteBatch);
         _spriteBatch.End();
 
+        // Write FPS to Console
+        // if (gameTime.ElapsedGameTime.Milliseconds != 0)
+        // {
+        //     Debug.WriteLine($"FPS: {1000 / gameTime.ElapsedGameTime.Milliseconds}");
+        // }
+
         base.Draw(gameTime);
     }
 }

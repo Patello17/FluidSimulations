@@ -10,6 +10,11 @@ public class Particle
     private const float TEXTURE_SCALE = 0.0042f;
     private Texture2D texture;
     private DiscCollider collider;
+    public DiscCollider Collider
+    {
+        get { return this.collider; }
+        set { this.collider = value; }
+    }
     private Vector2 pos;
     public Vector2 Position
     {
@@ -58,7 +63,7 @@ public class Particle
 
     public bool IsColliding(Particle other)
     {
-        return this.collider.IsColliding(other.GetCollider());
+        return this.collider.IsColliding(other.Collider);
     }
 
     public void Accelerate(Vector2 acceleration)
