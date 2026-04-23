@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FluidSim")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a212eef45474ed832bf860921da8302a1507c163")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+feebdb320fc85c80a7cc4a06891d8144c025593d")]
 [assembly: System.Reflection.AssemblyProductAttribute("FluidSim")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FluidSim")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
