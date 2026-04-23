@@ -12,33 +12,39 @@ using Microsoft.Xna.Framework.Input;
 public class ParticleManager
 {
     private const float TEXTURE_SCALE = 0.0042f;
-    private const float WALL_DAMPING = 0.8f;
+    private float SMOOTHING_RADIUS = 100f;
+    private const float WALL_DAMPING = 0.9f; // 0.8f is good
+    // private const float PARTICLE_INTERACTION_TERM = 0.0004f;
+    private const float EQUILIBRIUM_RADIUS = 20f;
+    private const float REPULSIVE_TERM = 0.000005f;
+    private const float ATTRACTIVE_TERM = 0.0005f;
     private const float GRAVITY = 0.002f;
     private List<Particle> particles;
     private BoxCollider boxCollider;
 
     // Define Initial State
-    private int numParticle = 40;
-    private Vector2 particleSpacing = new Vector2(40, 40); 
-    private Vector2 initialPositionPadding = new Vector2(40, 100);
-    private int particleRadius = 20;
-    // private int numParticle = 100;
-    // private Vector2 particleSpacing = new Vector2(4, 4); 
+    // private int numParticle = 20;
+    // private Vector2 particleSpacing = new Vector2(40, 40); 
     // private Vector2 initialPositionPadding = new Vector2(40, 100);
-    // private int particleRadius = 2;
+    // private int particleRadius = 20;
+    private int numParticle = 1000;
+    private Vector2 particleSpacing = new Vector2(10, 10);
+    private Vector2 initialPositionPadding = new Vector2(40, 100);
+    private int particleRadius = 10;
 
     public ParticleManager(Vector2 managementZonePos, int width, int height)
     {
-        // Particle particleA = new Particle(new Vector2(200, 200),
-        //                                       new Vector2(0.5f, 0), 20);
-        // Particle particleB = new Particle(new Vector2(800, 400),
-        //                                       new Vector2(-2f, 0f), 20);
+        Particle particleA = new Particle(new Vector2(200, 200),
+                                              new Vector2(1f, 0), 20);
+        Particle particleB = new Particle(new Vector2(1600, 200),
+                                              new Vector2(-1f, 0f), 20);
         // Particle particleC = new Particle(new Vector2(1000, 400),
         //                                       new Vector2(0, 0), 20);
         this.particles = new List<Particle>();
         // this.particles.Add(particleA);
         // this.particles.Add(particleB);
         // this.particles.Add(particleC);
+
         int cols = (int)((width - 2 * initialPositionPadding.X) / (2 * particleRadius * TEXTURE_SCALE + particleSpacing.X));
         for (int i = 0; i < numParticle; i++)
         {
@@ -46,7 +52,7 @@ public class ParticleManager
             float col = i % cols;
             this.particles.Add(new Particle(new Vector2(particleSpacing.X * col + initialPositionPadding.X, 
                                                         particleSpacing.Y * row + initialPositionPadding.Y),
-                                                        new Vector2(4f, 2f), particleRadius));
+                                                        new Vector2(1f, 1f), particleRadius));
         }
         this.boxCollider = new BoxCollider(managementZonePos, width, height);
     }
@@ -65,8 +71,30 @@ public class ParticleManager
 
         foreach (Particle particle in this.particles)
         {
-            particle.Position += boxCollider.CalculateCollisionCorrection(gameTime, particle);
+            List<Particle> nearby_particles = new List<Particle>();
+            foreach(Particle nearby_particle in this.particles)
+            {
+                if (particle.CalculateDistanceToParticle(nearby_particle) < SMOOTHING_RADIUS)
+                {
+                    nearby_particles.Add(nearby_particle);
+                }
+            }
             particle.Accelerate(new Vector2(0, GRAVITY * gameTime.ElapsedGameTime.Milliseconds));
+            foreach (Particle other in nearby_particles)
+            {
+                float distanceBetweenParticles = particle.CalculateDistanceToParticle(other);
+                if (distanceBetweenParticles < EQUILIBRIUM_RADIUS)
+                {
+                    particle.Accelerate(-1f * particle.CalculateVectorToParticle(other) * REPULSIVE_TERM);
+                    other.Accelerate(-1f * particle.CalculateVectorToParticle(particle) * REPULSIVE_TERM);
+                }
+                else
+                {
+                    particle.Accelerate(particle.CalculateVectorToParticle(other) * ATTRACTIVE_TERM / distanceBetweenParticles);
+                    other.Accelerate(particle.CalculateVectorToParticle(particle) * ATTRACTIVE_TERM / distanceBetweenParticles);
+                }
+                
+            }
             if (boxCollider.IsCollidingHorizontal(particle.Collider))
             {
                 particle.Velocity = new Vector2(-particle.Velocity.X, particle.Velocity.Y) * WALL_DAMPING;
@@ -75,8 +103,9 @@ public class ParticleManager
             {
                 particle.Velocity = new Vector2(particle.Velocity.X, -particle.Velocity.Y) * WALL_DAMPING;
             }
+            particle.Accelerate(new Vector2(0, GRAVITY * gameTime.ElapsedGameTime.Milliseconds));
+            particle.Position += boxCollider.CalculateCollisionCorrection(gameTime, particle);
             particle.Update(gameTime);
-
         }
     }
     

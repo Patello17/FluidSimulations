@@ -71,6 +71,18 @@ public class Particle
         this.vel += acceleration;
     }
 
+    public float CalculateDistanceToParticle(Particle other)
+    {
+        float delta_x = other.Position.X - this.pos.X;
+        float delta_y = other.Position.Y - this.pos.Y;
+        return (float)Math.Sqrt(delta_x * delta_x + delta_y * delta_y);
+    }
+    public Vector2 CalculateVectorToParticle(Particle other)
+    {
+        float delta_x = other.Position.X - this.pos.X;
+        float delta_y = other.Position.Y - this.pos.Y;
+        return new Vector2(delta_x, delta_y);
+    }
     private Color CalculateColorBasedOnVelocity()
     {
         float magnitude = (float)Math.Sqrt(this.vel.X * this.vel.X + this.vel.Y * this.vel.Y);
